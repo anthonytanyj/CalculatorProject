@@ -1,54 +1,60 @@
-function addition(a,b){
-    a_int = parseInt(a);
-    b_int = parseInt(b);
+let currentInput = '';
+let firstOperand = null;
+let operator = null;
+let isCalculated = false;
 
-    return a_int + b_int
-}
-
-function subtract(a,b){
-    a_int = parseInt(a);
-    b_int = parseInt(b);
-
-    return a_int - b_int
-}
-
-function multiply(a,b){
-    a_int = parseInt(a);
-    b_int = parseInt(b);
-
-    if (b_int === 0){
-        return "ERROR"
+function appendToDisplay(value) {
+    if (value === '.' && currentInput.includes('.')) {
+        return;
     }
-    return a_int * b_int
+    currentInput += value;
+    document.getElementById('display').value = currentInput;
 }
 
-function divide(a,b){
-    a_int = parseInt(a);
-    b_int = parseInt(b);
+function performOperation(op) {
+    if (firstOperand === null) {
+        firstOperand = parseFloat(currentInput);
+    } else if (operator && currentInput) {
+        firstOperand = operate();
+    }
 
-    return a_int / b_int
+    operator = op;
+    currentInput = '';
 }
 
-function operate(number1, operator, number2) {
+function operate() {
+    if (firstOperand === null || operator === null || currentInput === '') {
+        document.getElementById('display').value = 'Error';
+        return;
+    }
     let result;
     switch (operator) {
         case '+':
-            result = addition(number1, number2);
+            result = firstOperand + parseFloat(currentInput);
             break;
         case '-':
-            result = subtract(number1, number2);
+            result = firstOperand - parseFloat(currentInput);
             break;
         case '*':
-            result = multiply(number1, number2);
+            result = firstOperand * parseFloat(currentInput);
             break;
         case '/':
-            if (parseInt(number2) === 0) {
-                return "Cannot divide by zero";
+            if (parseFloat(currentInput) === 0) {
+                document.getElementById('display').value = 'Cannot divide by zero';
+                return;
             }
-            result = divide(number1, number2);
+            result = firstOperand / parseFloat(currentInput);
             break;
-        default:
-            return "Invalid operator";
     }
+    result = parseFloat(result.toFixed(8));
+    document.getElementById('display').value = result;
+    currentInput = '';
     return result;
+}
+
+function clearDisplay() {
+    currentInput = '';
+    firstOperand = null;
+    operator = null;
+    document.getElementById('display').value = '';
 }
